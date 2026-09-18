@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ミニトマトの学習</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for crisp presentation icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for clean Japanese typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS for animations and tweaks -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+
+        /* Slide transition animations */
+        .slide-enter {
+            animation: fadeInRight 0.35s ease-out forwards;
+        }
+        .slide-exit {
+            animation: fadeOutLeft 0.35s ease-out forwards;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeOutLeft {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+        }
+
+        /* Card bounce effect on hover */
+        .card-interactive {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-interactive:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(30, 58, 138, 0.2);
+        }
+
+        /* Pulse highlight for CTA button */
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
+            }
+        }
+        .cta-pulse {
+            animation: pulseGlow 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-blue-200">
+
+    <!-- Top Header -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30 border-b-4 border-blue-600">
+        <div class="max-w-7xl mx-auto px-4 py-2 sm:px-6 flex items-center justify-between">
+            <!-- App Title & Badge -->
+            <div class="flex items-center space-x-3">
+                <div class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-black text-xl shadow-inner">
+                    <i class="fa-solid fa-apple-whole"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                        ミニトマトの学習
+                        <span class="text-xs bg-blue-600 text-blue-100 px-2 py-0.5 rounded-full font-normal hidden sm:inline-block">デジタル教材</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Slide Index Button -->
+                <button onclick="openIndexModal()" class="bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-1.5 transition active:scale-95" title="目次を開く">
+                    <i class="fa-solid fa-list-ul"></i>
+                    <span class="hidden md:inline">目次</span>
+                </button>
+
+                <!-- Fullscreen Toggle Button -->
+                <button onclick="toggleFullscreen()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-1.5 transition active:scale-95" title="全画面表示">
+                    <i class="fa-solid fa-expand" id="fullscreenIcon"></i>
+                    <span class="hidden md:inline" id="fullscreenText">大画面</span>
+                </button>
+
+                <!-- Current Slide Indicator -->
+                <div class="bg-blue-950 border border-blue-800 text-blue-200 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-bold">
+                    <span id="currentSlideNum">1</span> / <span id="totalSlideNum">8</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-800 h-2">
+            <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-indigo-400 h-2 transition-all duration-300 ease-out" style="width: 12.5%;"></div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-3 py-4 sm:px-6 sm:py-6 flex flex-col justify-center">
+        
+        <!-- Slide Cards Wrapper -->
+        <div id="slideContainer" class="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-5 sm:p-8 min-h-[540px] flex flex-col justify-between relative overflow-hidden transition-all">
+            
+            <!-- Dynamic Slide Content Inserted Here by JS -->
+            <div id="slideContent" class="slide-enter flex-grow flex flex-col justify-between">
+                <!-- Content generated via JavaScript -->
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <footer class="bg-white border-t border-slate-200 py-3 px-4 shadow-lg sticky bottom-0 z-20">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            
+            <!-- Prev Button -->
+            <button id="prevBtn" onclick="changeSlide(-1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed font-bold px-4 sm:px-6 py-2.5 rounded-xl flex items-center gap-2 transition text-base active:scale-95">
+                <i class="fa-solid fa-chevron-left"></i>
+                <span class="hidden sm:inline">前へ</span>
+            </button>
+
+            <!-- Slide Dot Indicators -->
+            <div id="dotIndicators" class="flex items-center space-x-1.5 sm:space-x-2">
+                <!-- Dots populated by JS -->
+            </div>
+
+            <!-- Next Button -->
+            <button id="nextBtn" onclick="changeSlide(1)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 sm:px-6 py-2.5 rounded-xl flex items-center gap-2 transition text-base shadow-md hover:shadow-lg active:scale-95">
+                <span class="hidden sm:inline">次へ</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Mandatory Copyright Notice (Fixed Bottom Right) -->
+    <div class="fixed bottom-3 right-3 z-40 bg-slate-900/90 text-slate-200 backdrop-blur-md text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-lg shadow-lg border border-slate-700 pointer-events-none">
+        ©2026 t-suzuki
+    </div>
+
+    <!-- Slide Index Modal -->
+    <div id="indexModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-200">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-blue-600"></i>
+                    学習の目次（スライド一覧）
+                </h2>
+                <button onclick="closeIndexModal()" class="text-slate-400 hover:text-slate-600 text-2xl p-1 rounded-lg hover:bg-slate-100">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div id="modalIndexList" class="py-4 grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto flex-grow">
+                <!-- Populated dynamically -->
+            </div>
+
+            <div class="pt-4 border-t border-slate-200 text-right">
+                <button onclick="closeIndexModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2 rounded-xl text-sm">
+                    閉じる
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /*
+         * ミニトマトの学習 - 教育用スライド型プレゼンテーションアプリ
+         * 作成者: t-suzuki
+         * 教員向け設定・編集ガイド:
+         *   - slidesData 配列内のオブジェクトを直接書き換えることで、授業内容や画像、問題文を簡単にアレンジ可能です。
+         */
+
+        // 音響システム (Web Audio API)
+        const playSound = (freq = 440, type = 'sine', duration = 0.08) => {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {
+                // Audio not allowed without prior interaction or unsupported
+            }
+        };
+
+        // スライド全データ構成
+        const slidesData = [
+            {
+                id: 1,
+                tag: "1. 身近な例",
+                title: "ミニトマトってどこで見かける？",
+                subtitle: "私たちの毎日の生活のあちこちに登場する、人気者のお野菜！",
+                render: () => `
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-xl">
+                            <p class="text-base sm:text-lg text-blue-900 font-semibold">
+                                <i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>
+                                身の回りを思い浮かべてみよう！カードをタップすると小さなヒミツが見えるよ！
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Card 1 -->
+                            <div onclick="toggleCardFact(this)" class="card-interactive bg-white border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-400 group relative overflow-hidden flex flex-col justify-between">
+                                <div>
+                                    <div class="h-32 rounded-lg overflow-hidden mb-3 bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80" alt="お弁当" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/500x300/e2e8f0/1e293b?text=お弁当'">
+                                    </div>
+                                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                                        <i class="fa-solid fa-box text-red-500"></i> お弁当の彩り
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mt-1">赤い色がすき間を明るく彩る定番のおかず！</p>
+                                </div>
+                                <div class="fact-box hidden mt-3 pt-2 border-t border-dashed border-slate-200 text-xs text-blue-700 bg-blue-50 p-2 rounded">
+                                    💡 <b>プチ豆知識:</b> 洗ってそのまま入れられるから忙しい朝の味方！
+                                </div>
+                            </div>
+
+                            <!-- Card 2 -->
+                            <div onclick="toggleCardFact(this)" class="card-interactive bg-white border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-400 group relative overflow-hidden flex flex-col justify-between">
+                                <div>
+                                    <div class="h-32 rounded-lg overflow-hidden mb-3 bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=500&q=80" alt="給食のサラダ" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/500x300/e2e8f0/1e293b?text=給食'">
+                                    </div>
+                                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                                        <i class="fa-solid fa-utensils text-green-600"></i> 学校の給食
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mt-1">サラダや丸ごと1個のおかずとして登場。</p>
+                                </div>
+                                <div class="fact-box hidden mt-3 pt-2 border-t border-dashed border-slate-200 text-xs text-blue-700 bg-blue-50 p-2 rounded">
+                                    💡 <b>プチ豆知識:</b> ビタミンの補給に最適で、噛むとジュワッと甘い！
+                                </div>
+                            </div>
+
+                            <!-- Card 3 -->
+                            <div onclick="toggleCardFact(this)" class="card-interactive bg-white border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-400 group relative overflow-hidden flex flex-col justify-between">
+                                <div>
+                                    <div class="h-32 rounded-lg overflow-hidden mb-3 bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=500&q=80" alt="スーパーマーケット" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/500x300/e2e8f0/1e293b?text=スーパー'">
+                                    </div>
+                                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                                        <i class="fa-solid fa-cart-shopping text-amber-600"></i> スーパーの売り場
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mt-1">赤・黄・オレンジ・緑などカラフルな種類！</p>
+                                </div>
+                                <div class="fact-box hidden mt-3 pt-2 border-t border-dashed border-slate-200 text-xs text-blue-700 bg-blue-50 p-2 rounded">
+                                    💡 <b>プチ豆知識:</b> 形も丸型、縦長（プラム型）などバリエーション豊か。
+                                </div>
+                            </div>
+
+                            <!-- Card 4 -->
+                            <div onclick="toggleCardFact(this)" class="card-interactive bg-white border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-400 group relative overflow-hidden flex flex-col justify-between">
+                                <div>
+                                    <div class="h-32 rounded-lg overflow-hidden mb-3 bg-slate-100">
+                                        <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=500&q=80" alt="家庭菜園" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/500x300/e2e8f0/1e293b?text=家庭菜園'">
+                                    </div>
+                                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                                        <i class="fa-solid fa-seedling text-emerald-600"></i> 家や学校の植木鉢
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mt-1">ベランダや理科の授業で育てる大人気植物。</p>
+                                </div>
+                                <div class="fact-box hidden mt-3 pt-2 border-t border-dashed border-slate-200 text-xs text-blue-700 bg-blue-50 p-2 rounded">
+                                    💡 <b>プチ豆知識:</b> 初心者でもたくさん実がとれるから大人気！
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            {
+                id: 2,
+                tag: "2. なぜ学ぶか",
+                title: "なぜミニトマトについて学ぶのかな？",
+                subtitle: "ただ食べるだけでなく、命・食育・テクノロジーを学べる最高のテーマ！",
+                render: () => `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-auto">
+                        
+                        <!-- Point 1 -->
+                        <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200 hover:bg-blue-50/60 transition">
+                            <div class="bg-blue-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold shrink-0 shadow">
+                                1
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-blue-950 mb-1">生命（いのち）のフシギを知る</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">
+                                    小さな1粒のタネから、芽が出て、花が咲き、たくさんの実がついていく成長のドラマを自分の目で観察できます。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Point 2 -->
+                        <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200 hover:bg-blue-50/60 transition">
+                            <div class="bg-indigo-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold shrink-0 shadow">
+                                2
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-blue-950 mb-1">食育（しょくいく）と感謝</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">
+                                    自分で手間ひまかけてお世話をすることで、食べ物の大切さや農家さんの苦労・工夫への感謝の気持ちが芽生えます。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Point 3 -->
+                        <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200 hover:bg-blue-50/60 transition">
+                            <div class="bg-teal-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold shrink-0 shadow">
+                                3
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-blue-950 mb-1">科学と農業の仕組み</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">
+                                    光合成、水分や栄養の吸収、さらには最新のAI・ロボットによる農業（スマート農業）まで幅広い知識が学べます。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Point 4 -->
+                        <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200 hover:bg-blue-50/60 transition">
+                            <div class="bg-rose-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold shrink-0 shadow">
+                                4
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-blue-950 mb-1">失敗から学ぶ体験学習</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">
+                                    「水を与えすぎた」「わき芽を伸ばしすぎた」など、原因を考えて工夫し成功させる観察力を養うことができます。
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                `
+            },
+
+            {
+                id: 3,
+                tag: "3. 今日の学習目標",
+                title: "本日の「めあて」と達成目標",
+                subtitle: "この授業が終わるころには、みんなも「ミニトマト博士」になれるよ！",
+                render: () => `
+                    <div class="space-y-6 my-auto">
+                        <!-- Main Banner Goal -->
+                        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden">
+                            <div class="absolute -right-6 -bottom-6 text-slate-100/10 text-9xl font-black select-none pointer-events-none">GOAL</div>
+                            <span class="inline-block bg-amber-400 text-slate-900 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-2">今日のめあて</span>
+                            <h3 class="text-2xl sm:text-3xl font-black leading-snug">
+                                ミニトマトの「育ち方」「歴史」「最新技術」「おいしさ」をマスターしよう！
+                            </h3>
+                        </h3>
+                        </div>
+
+                        <!-- Checklist targets -->
+                        <div class="bg-white border-2 border-slate-200 rounded-2xl p-5 space-y-3">
+                            <p class="font-bold text-slate-700 text-sm mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-blue-600"></i>
+                                学習のチェックポイント（クリックしてチェックを入れてみよう！）
+                            </p>
+
+                            <label class="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 rounded-xl cursor-pointer transition">
+                                <input type="checkbox" onchange="playSound(600)" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-base font-semibold text-slate-800">1. ミニトマトが成長する5つのステップを言えるようになる</span>
+                            </label>
+
+                            <label class="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 rounded-xl cursor-pointer transition">
+                                <input type="checkbox" onchange="playSound(650)" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-base font-semibold text-slate-800">2. 南米アンデス山脈から日本へ渡ってきた歴史を知る</span>
+                            </label>
+
+                            <label class="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 rounded-xl cursor-pointer transition">
+                                <input type="checkbox" onchange="playSound(700)" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-base font-semibold text-slate-800">3. AIロボットや水耕栽培などのスマート農業を知る</span>
+                            </label>
+
+                            <label class="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 rounded-xl cursor-pointer transition">
+                                <input type="checkbox" onchange="playSound(750)" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-base font-semibold text-slate-800">4. おいしく育てる重要作業「わき芽かき」の理由を理解する</span>
+                            </label>
+                        </div>
+                    </div>
+                `
+            },
+
+            {
+                id: 4,
+                tag: "4. 育つ仕組み",
+                title: "ミニトマトはどうやって育つ？",
+                subtitle: "タネまきから真っ赤な実の収穫までのステップと、大事なお世話！",
+                render: () => `
+                    <div class="space-y-6">
+                        <!-- Growth Steps Stepper -->
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
+                            <!-- Step 1 -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center flex flex-col items-center">
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full mb-1">Step 1</span>
+                                <div class="text-2xl my-1">🌱</div>
+                                <h4 class="font-bold text-sm text-slate-800">発芽</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">タネをまいて約1週間で芽が出る</p>
+                            </div>
+                            <!-- Step 2 -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center flex flex-col items-center">
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full mb-1">Step 2</span>
+                                <div class="text-2xl my-1">🌿</div>
+                                <h4 class="font-bold text-sm text-slate-800">茎と葉の成長</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">太陽をあびてグングン伸びる</p>
+                            </div>
+                            <!-- Step 3 -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center flex flex-col items-center">
+                                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded-full mb-1">Step 3</span>
+                                <div class="text-2xl my-1">🌼</div>
+                                <h4 class="font-bold text-sm text-slate-800">黄色い花</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">小さな黄色い花が咲く</p>
+                            </div>
+                            <!-- Step 4 -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center flex flex-col items-center">
+                                <span class="bg-lime-100 text-lime-800 text-xs font-bold px-2 py-0.5 rounded-full mb-1">Step 4</span>
+                                <div class="text-2xl my-1">🍏</div>
+                                <h4 class="font-bold text-sm text-slate-800">青い実</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">花が落ちて小さな硬い実ができる</p>
+                            </div>
+                            <!-- Step 5 -->
+                            <div class="bg-red-50 border border-red-200 rounded-xl p-3 text-center flex flex-col items-center col-span-2 sm:col-span-1">
+                                <span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full mb-1">Step 5</span>
+                                <div class="text-2xl my-1">🍅</div>
+                                <h4 class="font-bold text-sm text-red-900">赤熟・収穫</h4>
+                                <p class="text-[11px] text-red-700 mt-1">太陽を浴びて真っ赤に熟す！</p>
+                            </div>
+                        </div>
+
+                        <!-- Key Care Conditions Table/Grid -->
+                        <div class="bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
+                            <h3 class="font-bold text-blue-950 text-base mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-hand-holding-droplet text-blue-600"></i>
+                                すくすく育てる「4つの極意」
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex gap-3 items-center">
+                                    <div class="bg-amber-100 text-amber-600 p-2.5 rounded-lg text-lg"><i class="fa-solid fa-sun"></i></div>
+                                    <div>
+                                        <div class="font-bold text-slate-800">① 日光（太陽の光）</div>
+                                        <div class="text-slate-600">1日5〜6時間以上、日当たりの良い場所へ！</div>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex gap-3 items-center">
+                                    <div class="bg-blue-100 text-blue-600 p-2.5 rounded-lg text-lg"><i class="fa-solid fa-droplet"></i></div>
+                                    <div>
+                                        <div class="font-bold text-slate-800">② 水やり</div>
+                                        <div class="text-slate-600">「土の表面が乾いたら」朝にたっぷり！あげすぎ注意</div>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex gap-3 items-center">
+                                    <div class="bg-emerald-100 text-emerald-600 p-2.5 rounded-lg text-lg"><i class="fa-solid fa-scissors"></i></div>
+                                    <div>
+                                        <div class="font-bold text-slate-800">③ わき芽かき（重要！）</div>
+                                        <div class="text-slate-600">葉の付け根から出る不要な芽を手で摘み取る</div>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex gap-3 items-center">
+                                    <div class="bg-purple-100 text-purple-600 p-2.5 rounded-lg text-lg"><i class="fa-solid fa-flask"></i></div>
+                                    <div>
+                                        <div class="font-bold text-slate-800">④ 肥料（追肥）</div>
+                                        <div class="text-slate-600">実がつき始めたら定期的に栄養を与える</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            {
+                id: 5,
+                tag: "5. 歴史・背景",
+                title: "ミニトマトはどこから来たの？",
+                subtitle: "はるか遠くの南米アンデス山脈から世界へ旅した歴史！",
+                render: () => `
+                    <div class="space-y-5 my-auto">
+                        <!-- Timeline container -->
+                        <div class="relative border-l-4 border-blue-400 pl-4 sm:pl-6 ml-2 sm:ml-4 space-y-6">
+                            
+                            <!-- Timeline 1 -->
+                            <div class="relative group">
+                                <div class="absolute -left-[25px] sm:-left-[33px] top-0 bg-blue-600 text-white w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white shadow">
+                                    1
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <span class="text-xs font-extrabold text-blue-600 uppercase tracking-wide">原産地（起源）</span>
+                                    <h4 class="font-bold text-slate-800 text-base sm:text-lg">南米アンデス山脈の高原地帯</h4>
+                                    <p class="text-xs sm:text-sm text-slate-600 mt-1">
+                                        もともとは野生の「チェリートマト」と呼ばれる小さな実が原点。雨が少なく乾燥した過酷な環境で育ちました。
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Timeline 2 -->
+                            <div class="relative group">
+                                <div class="absolute -left-[25px] sm:-left-[33px] top-0 bg-blue-600 text-white w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white shadow">
+                                    2
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <span class="text-xs font-extrabold text-amber-600 uppercase tracking-wide">16世紀（大航海時代）</span>
+                                    <h4 class="font-bold text-slate-800 text-base sm:text-lg">ヨーロッパへ渡る（当時は観賞用！？）</h4>
+                                    <p class="text-xs sm:text-sm text-slate-600 mt-1">
+                                        スペイン人によってヨーロッパに運ばれました。最初は「毒があるかも？」と恐れられ、見るだけの観賞用植物でした。
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Timeline 3 -->
+                            <div class="relative group">
+                                <div class="absolute -left-[25px] sm:-left-[33px] top-0 bg-blue-600 text-white w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 border-white shadow">
+                                    3
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <span class="text-xs font-extrabold text-red-600 uppercase tracking-wide">江戸時代〜現代の日本</span>
+                                    <h4 class="font-bold text-slate-800 text-base sm:text-lg">日本への伝来と「ミニトマト大ブーム」</h4>
+                                    <p class="text-xs sm:text-sm text-slate-600 mt-1">
+                                        日本では最初「唐柿（とうがき）」と呼ばれました。1980年代（昭和50年代後半）から一口サイズで甘いミニトマトが全国で大ヒット！
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                `
+            },
+
+            {
+                id: 6,
+                tag: "6. 社会での使われ方",
+                title: "社会での活躍と「スマート農業」",
+                subtitle: "最先端テクノロジーと農家さんの工夫で、一年中おいしいトマトが届く！",
+                render: () => `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-auto">
+                        
+                        <!-- Tech Card 1 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-500 transition flex gap-4 items-start">
+                            <div class="bg-blue-100 text-blue-700 p-3 rounded-2xl text-2xl shrink-0">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">AI ＆ ロボット</span>
+                                <h3 class="font-bold text-slate-800 text-base mt-1">自動収穫ロボット</h3>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                    カメラとAIが赤く熟したミニトマトだけを見分け、傷つけずにアームで自動で収穫します。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Tech Card 2 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-500 transition flex gap-4 items-start">
+                            <div class="bg-cyan-100 text-cyan-700 p-3 rounded-2xl text-2xl shrink-0">
+                                <i class="fa-solid fa-faucet-drip"></i>
+                            </div>
+                            <div>
+                                <span class="bg-cyan-100 text-cyan-800 text-[10px] font-bold px-2 py-0.5 rounded-full">環境制御</span>
+                                <h3 class="font-bold text-slate-800 text-base mt-1">水耕栽培（養液栽培）</h3>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                    土を使わず、水と栄養分をコンピューター制御。温室の中で季節を問わず高品質な栽培が可能。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Tech Card 3 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-500 transition flex gap-4 items-start">
+                            <div class="bg-amber-100 text-amber-700 p-3 rounded-2xl text-2xl shrink-0">
+                                <i class="fa-solid fa-candy-cane"></i>
+                            </div>
+                            <div>
+                                <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">ブランド品種</span>
+                                <h3 class="font-bold text-slate-800 text-base mt-1">高糖度フルーツトマト</h3>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                    与える水の量を極限まで減らし、果物のようにとても甘いミニトマトを作り出す技術。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Tech Card 4 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-500 transition flex gap-4 items-start">
+                            <div class="bg-emerald-100 text-emerald-700 p-3 rounded-2xl text-2xl shrink-0">
+                                <i class="fa-solid fa-truck-fast"></i>
+                            </div>
+                            <div>
+                                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">流通と加工</span>
+                                <h3 class="font-bold text-slate-800 text-base mt-1">ジュース・ソース・加工品</h3>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                    新鮮なまま出荷するだけでなく、ケチャップやトマトジュース、缶詰などに姿を変えて活躍！
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                `
+            },
+
+            {
+                id: 7,
+                tag: "7. おいしい料理",
+                title: "おいしいトマト料理",
+                subtitle: "生で食べても加熱してもおいしい！うまみ成分「グルタミン酸」がたっぷり！",
+                render: () => `
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 my-auto">
+                        
+                        <!-- Recipe 1 -->
+                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                            <div class="h-28 overflow-hidden bg-slate-100">
+                                <img src="https://images.unsplash.com/photo-1592417817098-8f3d6ef23a28?auto=format&fit=crop&w=400&q=80" alt="カプレーゼ" class="w-full h-full object-cover hover:scale-105 transition" onerror="this.src='https://placehold.co/400x300/e2e8f0/1e293b?text=カプレーゼ'">
+                            </div>
+                            <div class="p-2.5 flex-grow flex flex-col justify-between">
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">カプレーゼ</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">チーズとバジル、オリーブオイルを添えてイタリア風！</p>
+                            </div>
+                        </div>
+
+                        <!-- Recipe 2 -->
+                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                            <div class="h-28 overflow-hidden bg-slate-100">
+                                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80" alt="はちみつマリネ" class="w-full h-full object-cover hover:scale-105 transition" onerror="this.src='https://placehold.co/400x300/e2e8f0/1e293b?text=マリネ'">
+                            </div>
+                            <div class="p-2.5 flex-grow flex flex-col justify-between">
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">はちみつマリネ</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">湯むきして甘いシロップにつけるとまるでスイーツ！</p>
+                            </div>
+                        </div>
+
+                        <!-- Recipe 3 -->
+                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                            <div class="h-28 overflow-hidden bg-slate-100">
+                                <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=400&q=80" alt="トマトスープ" class="w-full h-full object-cover hover:scale-105 transition" onerror="this.src='https://placehold.co/400x300/e2e8f0/1e293b?text=スープ'">
+                            </div>
+                            <div class="p-2.5 flex-grow flex flex-col justify-between">
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">たまごスープ</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">温かいスープに入れると酸味がまろやかに変身！</p>
+                            </div>
+                        </div>
+
+                        <!-- Recipe 4 -->
+                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                            <div class="h-28 overflow-hidden bg-slate-100">
+                                <img src="https://images.unsplash.com/photo-1621996346565-e3d5d6281288?auto=format&fit=crop&w=400&q=80" alt="トマトパスタ" class="w-full h-full object-cover hover:scale-105 transition" onerror="this.src='https://placehold.co/400x300/e2e8f0/1e293b?text=パスタ'">
+                            </div>
+                            <div class="p-2.5 flex-grow flex flex-col justify-between">
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">フレッシュパスタ</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">つぶしながら炒めると濃厚なソースに早変わり！</p>
+                            </div>
+                        </div>
+
+                        <!-- Recipe 5 -->
+                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col col-span-2 sm:col-span-1">
+                            <div class="h-28 overflow-hidden bg-slate-100">
+                                <img src="https://images.unsplash.com/photo-1534939561126-855b8675edd7?auto=format&fit=crop&w=400&q=80" alt="グリル焼き" class="w-full h-full object-cover hover:scale-105 transition" onerror="this.src='https://placehold.co/400x300/e2e8f0/1e293b?text=オーブン焼き'">
+                            </div>
+                            <div class="p-2.5 flex-grow flex flex-col justify-between">
+                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm">オーブン焼き</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">じっくり焼くと甘みが何倍にもギュッと濃縮！</p>
+                            </div>
+                        </div>
+
+                    </div>
+                `
+            },
+
+            {
+                id: 8,
+                tag: "8. まとめ＆体験サイトへ",
+                title: "ミニトマトのまとめ ＆ 栽培体験！",
+                subtitle: "最後に復習クイズに挑戦して、実際にシミュレーターで育ててみよう！",
+                render: () => `
+                    <div class="space-y-5">
+                        
+                        <!-- Quick Mini Quiz Component -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                            <h3 class="font-bold text-slate-800 text-sm mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-question text-blue-600"></i>
+                                ミニクイズ：ミニトマトを育てるときに大切な「不要な芽を摘み取る作業」の名前は？
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2" id="quizOptions">
+                                <button onclick="checkAnswer(this, false)" class="bg-white hover:bg-slate-100 border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm font-semibold text-slate-700 transition">
+                                    A. 花摘み（はなつみ）
+                                </button>
+                                <button onclick="checkAnswer(this, true)" class="bg-white hover:bg-slate-100 border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm font-semibold text-slate-700 transition">
+                                    B. わき芽かき（わきめかき）
+                                </button>
+                                <button onclick="checkAnswer(this, false)" class="bg-white hover:bg-slate-100 border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm font-semibold text-slate-700 transition">
+                                    C. 根切り（ねきり）
+                                </button>
+                            </div>
+                            <div id="quizResult" class="hidden mt-2 p-2 rounded-lg text-xs font-bold text-center"></div>
+                        </div>
+
+                        <!-- CTA External Link Box -->
+                        <div class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-6 shadow-xl border-2 border-blue-400/30 text-center relative overflow-hidden">
+                            <div class="relative z-10 max-w-xl mx-auto space-y-4">
+                                <span class="bg-red-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider inline-block shadow">
+                                    Web体験教材サイトへGO！
+                                </span>
+                                
+                                <h3 class="text-xl sm:text-2xl font-black text-white leading-snug">
+                                    ミニトマト栽培お試しサイト<br class="sm:hidden">『ミニトマカンパニー』
+                                </h3>
+
+                                <p class="text-xs sm:text-sm text-blue-200 leading-relaxed">
+                                    オンラインでミニトマトの栽培シミュレーションができる素晴らしい体験教材です！<br>
+                                    画面の中で自分のミニトマトをすくすく育ててみましょう。
+                                </p>
+
+                                <div class="pt-2">
+                                    <a href="https://gijyutu.com/kyouzai/minitoma/" target="_blank" rel="noopener noreferrer" 
+                                       onclick="playSound(800)"
+                                       class="cta-pulse inline-flex items-center justify-center gap-3 bg-red-600 hover:bg-red-500 text-white font-black text-base sm:text-lg px-8 py-3.5 rounded-2xl transition shadow-xl hover:scale-105 active:scale-95">
+                                        <i class="fa-solid fa-rocket"></i>
+                                        ミニトマカンパニーを開く
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-80"></i>
+                                    </a>
+                                </div>
+                                <p class="text-[11px] text-slate-400">※ 新しいタブで「gijyutu.com」が開きます</p>
+                            </div>
+                        </div>
+
+                    </div>
+                `
+            }
+        ];
+
+        let currentSlideIndex = 0;
+        const totalSlides = slidesData.length;
+
+        // UI DOM Elements
+        const slideContentEl = document.getElementById('slideContent');
+        const currentSlideNumEl = document.getElementById('currentSlideNum');
+        const totalSlideNumEl = document.getElementById('totalSlideNum');
+        const progressBarEl = document.getElementById('progressBar');
+        const dotIndicatorsEl = document.getElementById('dotIndicators');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const indexModal = document.getElementById('indexModal');
+        const modalIndexList = document.getElementById('modalIndexList');
+
+        // スライド描画処理
+        function renderSlide(index) {
+            const slide = slidesData[index];
+            
+            // Header slide info
+            currentSlideNumEl.textContent = index + 1;
+            totalSlideNumEl.textContent = totalSlides;
+
+            // Progress bar calculation
+            const progressPercent = ((index + 1) / totalSlides) * 100;
+            progressBarEl.style.width = `${progressPercent}%`;
+
+            // HTML Structure for slide header & dynamic content
+            slideContentEl.className = "slide-enter flex-grow flex flex-col justify-between";
+            slideContentEl.innerHTML = `
+                <div>
+                    <!-- Slide Tag Badge -->
+                    <div class="mb-2">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full inline-flex items-center gap-1.5 border border-blue-200">
+                            <i class="fa-solid fa-bookmark text-blue-600"></i>
+                            ${slide.tag}
+                        </span>
+                    </div>
+                    
+                    <!-- Slide Title & Subtitle -->
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
+                        ${slide.title}
+                    </h2>
+                    <p class="text-slate-500 text-xs sm:text-sm mt-1 mb-4 font-medium">
+                        ${slide.subtitle}
+                    </p>
+
+                    <!-- Slide Main Inner View -->
+                    ${slide.render()}
+                </div>
+            `;
+
+            // Navigation buttons state
+            prevBtn.disabled = index === 0;
+            if (index === totalSlides - 1) {
+                nextBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                nextBtn.classList.add('bg-slate-700', 'hover:bg-slate-800');
+            } else {
+                nextBtn.classList.remove('bg-slate-700', 'hover:bg-slate-800');
+                nextBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+
+            // Update dot indicators
+            updateDots(index);
+        }
+
+        // ドットインジケーターの作成＆更新
+        function createDots() {
+            dotIndicatorsEl.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('button');
+                dot.className = `w-3 h-3 rounded-full transition-all duration-200 ${i === currentSlideIndex ? 'bg-blue-600 w-6' : 'bg-slate-300 hover:bg-slate-400'}`;
+                dot.title = `スライド ${i + 1}`;
+                dot.onclick = () => jumpToSlide(i);
+                dotIndicatorsEl.appendChild(dot);
+            }
+        }
+
+        function updateDots(activeIndex) {
+            const dots = dotIndicatorsEl.children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === activeIndex) {
+                    dots[i].className = "w-6 h-3 bg-blue-600 rounded-full transition-all duration-200";
+                } else {
+                    dots[i].className = "w-3 h-3 bg-slate-300 hover:bg-slate-400 rounded-full transition-all duration-200";
+                }
+            }
+        }
+
+        // スライド切り替え関数
+        function changeSlide(direction) {
+            const newIndex = currentSlideIndex + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                playSound(500 + direction * 100);
+                currentSlideIndex = newIndex;
+                renderSlide(currentSlideIndex);
+            }
+        }
+
+        function jumpToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                playSound(550);
+                currentSlideIndex = index;
+                renderSlide(currentSlideIndex);
+                closeIndexModal();
+            }
+        }
+
+        // スライド1：カードタップ時の雑学表示
+        function toggleCardFact(element) {
+            playSound(700);
+            const factBox = element.querySelector('.fact-box');
+            if (factBox) {
+                factBox.classList.toggle('hidden');
+            }
+        }
+
+        // スライド8：クイズ正誤判定
+        function checkAnswer(btn, isCorrect) {
+            const resultBox = document.getElementById('quizResult');
+            const buttons = document.querySelectorAll('#quizOptions button');
+            
+            buttons.forEach(b => {
+                b.disabled = true;
+                b.classList.add('opacity-50');
+            });
+
+            resultBox.classList.remove('hidden');
+            if (isCorrect) {
+                playSound(880, 'triangle', 0.2);
+                btn.classList.remove('opacity-50', 'bg-white');
+                btn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+                resultBox.className = "mt-2 p-2 rounded-lg text-xs font-bold text-center bg-emerald-100 text-emerald-800 border border-emerald-300";
+                resultBox.innerHTML = "🎉 大正解！「わき芽かき」を行うことで栄養が主枝に集まり甘くて大きい実になります！";
+            } else {
+                playSound(220, 'sawtooth', 0.2);
+                btn.classList.remove('opacity-50', 'bg-white');
+                btn.classList.add('bg-rose-500', 'text-white', 'border-rose-600');
+                resultBox.className = "mt-2 p-2 rounded-lg text-xs font-bold text-center bg-rose-100 text-rose-800 border border-rose-300";
+                resultBox.innerHTML = "❌ 残念！正解は「B. わき芽かき」でした。スライド4で確認してみてね！";
+            }
+        }
+
+        // 目次モーダル操作
+        function openIndexModal() {
+            playSound(600);
+            modalIndexList.innerHTML = slidesData.map((s, idx) => `
+                <button onclick="jumpToSlide(${idx})" class="p-3 text-left rounded-xl border ${idx === currentSlideIndex ? 'border-blue-500 bg-blue-50/80 font-bold' : 'border-slate-200 hover:bg-slate-50'} transition flex items-center justify-between group">
+                    <div>
+                        <span class="text-xs font-bold text-blue-600 block">${s.tag}</span>
+                        <span class="text-sm text-slate-800">${s.title}</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:text-blue-600 transition"></i>
+                </button>
+            `).join('');
+
+            indexModal.classList.remove('hidden');
+            setTimeout(() => {
+                indexModal.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        function closeIndexModal() {
+            indexModal.classList.add('opacity-0');
+            setTimeout(() => {
+                indexModal.classList.add('hidden');
+            }, 200);
+        }
+
+        // フルスクリーン切り替え
+        function toggleFullscreen() {
+            playSound(650);
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {});
+                document.getElementById('fullscreenIcon').className = "fa-solid fa-compress";
+                document.getElementById('fullscreenText').textContent = "標準";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    document.getElementById('fullscreenIcon').className = "fa-solid fa-expand";
+                    document.getElementById('fullscreenText').textContent = "大画面";
+                }
+            }
+        }
+
+        // キーボード操作サポート（左右矢印キー）
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'Escape') {
+                closeIndexModal();
+            }
+        });
+
+        // アプリ初期化処理
+        window.addEventListener('DOMContentLoaded', () => {
+            createDots();
+            renderSlide(currentSlideIndex);
+        });
+    </script>
+</body>
+</html>
